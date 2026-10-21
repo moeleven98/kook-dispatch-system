@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KOOK 派单平台</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <section id="login" class="login" hidden>
+    <form id="login-form" class="login-card">
+      <h1>KOOK 派单平台</h1>
+      <p class="muted">密码在项目文件夹的 admin-password.txt 里</p>
+      <input id="password" type="password" placeholder="管理密码" autocomplete="current-password" required>
+      <button type="submit" class="primary">登录</button>
+      <p id="login-error" class="error"></p>
+    </form>
+  </section>
+
+  <div id="app" hidden>
+    <header class="topbar">
+      <div class="brand">KOOK 派单平台</div>
+      <div id="status" class="status"></div>
+      <button id="logout" class="ghost">退出登录</button>
+    </header>
+
+    <div id="stats" class="stats"></div>
+
+    <nav class="tabs">
+      <button data-tab="orders" class="tab active">订单</button>
+      <button data-tab="members" class="tab">成员角色</button>
+      <button data-tab="audit" class="tab">操作日志</button>
+      <button data-tab="settings" class="tab">识别设置</button>
+    </nav>
+
+    <main>
+      <section id="tab-orders" class="panel">
+        <div class="toolbar">
+          <select id="order-status"><option value="">全部状态</option></select>
+          <input id="order-q" type="search" placeholder="搜订单号 / 老板 / 打手 / 游戏 / 要求">
+          <button id="order-refresh">刷新</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>订单号</th><th>创单 / 开始 / 结束</th><th>状态</th><th>派单人</th><th>用户信息</th><th>接单人 / 评分</th><th>持续时长</th><th></th></tr></thead>
+            <tbody id="orders"></tbody>
+          </table>
+        </div>
+        <p id="orders-empty" class="muted center" hidden>还没有订单。让「老板」私信机器人或在频道 @机器人 下单试试。</p>
+      </section>
+
+      <section id="tab-members" class="panel" hidden>
+        <div class="toolbar">
+          <input id="member-q" type="search" placeholder="搜昵称 / 用户名">
+          <label class="check"><input id="member-online" type="checkbox"> 只看在线</label>
+          <button id="member-refresh">从 KOOK 刷新</button>
+        </div>
+        <div id="role-filter" class="chips"></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>成员</th><th>在线</th><th>角色</th><th>添加角色</th></tr></thead>
+            <tbody id="members"></tbody>
+          </table>
+        </div>
+        <p id="members-count" class="muted"></p>
+      </section>
+
+      <section id="tab-audit" class="panel" hidden>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>时间</th><th>操作人</th><th>操作</th><th>详情</th></tr></thead>
+            <tbody id="audit"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-settings" class="panel" hidden>
+        <div class="settings">
+          <p>当前识别方式：<strong id="llm-mode"></strong></p>
+          <p class="muted small">识别顺序：固定格式 → 大模型 API（填了 Key 时）→ Claude 人工识别（没 Key 且开启时）→ 只认固定格式。保存后立即生效，不用重启。</p>
+          <form id="llm-form" class="form">
+            <label>API Key
+              <input id="llm-key" type="password" autocomplete="off" placeholder="不改就留空">
+              <span id="llm-key-state" class="muted small"></span>
+            </label>
+            <label>接口地址（OpenAI 兼容）
+              <input id="llm-base" type="url" placeholder="https://api.deepseek.com" required>
+            </label>
+            <label>模型
+              <input id="llm-model" placeholder="deepseek-chat" required>
+            </label>
+            <label class="check"><input id="llm-claude" type="checkbox"> 没有 Key 时，由 Claude 人工识别（需要 Claude 会话正在值守）</label>
+            <div class="form-actions">
+              <button type="submit" class="primary">保存</button>
+              <button type="button" id="llm-clear" class="ghost danger">清除 Key</button>
+            </div>
+          </form>
+          <p id="llm-pending" class="muted small"></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
